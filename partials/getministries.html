@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<link rel="stylesheet" href="../css/bootstrap.min.css">
+	<link rel="stylesheet" href="../css/highcharts.css">
+	<link rel="stylesheet" href="../css/style.css">
+
+	<script src="../js/jquery.min.js"></script>
+	<script src="../js/highcharts.js"></script>
+	<script src="../js/exporting.js"></script>
+  <script src="../js/script.js"></script>
+</head>
+<body>
+	<div class="container">
+			<div class="header clearfix">
+				<nav>
+					<ul class="nav nav-pills pull-right">
+						<li role="presentation"><a href="/">Home</a></li>
+						<li role="presentation" class="active"><a href='getministries.html'>Allocation Per Ministry</a></li>
+						<li role="presentation"><a href='parent.html'>Parent Allocations</a></li>
+					</ul>
+				</nav>
+				<h3 class="text-muted">Budget 2017</h3>
+			</div>
+
+			<div class="row">
+				<div class="col-md-4">
+					<select name="ministry" id="ministry" class="form-control"></select>
+				</div>
+				<div class="col-md-2">
+					<select name="direction" id="direction" class="form-control">
+						<option value="ASC">Ascending</option>
+						<option value="DESC">Descending</option>
+					</select>
+				</div>
+				<div class="col-md-1">
+					<input type="button" name="submit" class="btn" value="View Allocation" onclick="getMinistry();">
+				</div>
+			</div>
+			<br>
+			<div class="row">
+				<div class="col-md-12">
+					<div id="allocationPerMinistryGraph" style="min-width: 90%; min-height: 100%; margin: 0 auto"></div>
+				</div>
+			</div>
+
+			<footer class="footer">
+				<p>&copy; 2017 Tinitop</p>
+			</footer>
+
+		</div> <!-- /container -->
+
+<script type="text/javascript">
+
+//load ministries into select
+	var allocation = '../json/parents_allocation.json';
+	loadSelect = function () {
+		getData('GET', allocation).then(function (data) {
+	    var ministries = JSON.parse(data);
+	    var select = '';
+	    for (let ministry of ministries) {
+	      select += `<option value="${ministry.Ministry.replace(/ /g, '+')}">${ministry.Ministry}</option>`;
+	      document.getElementById('ministry').innerHTML = select;
+				//console.log(output);
+	    }
+	  }).catch(function (err) {
+	    console.log(err);
+	  });
+	};
+
+	window.onload = setTimeout(loadSelect, 1500);
+	window.onload = setTimeout(getMinistry, 2500);
+
+	//get value from select and call API
+	function getMinistry() {
+		var ministry = document.getElementById('ministry').value;
+		var direction = document.getElementById('direction').value;
+		var mda = [];
+		var amountAllocated = [];
+		var personnel = [];
+		var overhead = [];
+		var recurrent = [];
+		var capital = [];
+		var mdaByMinistry = `http://api.publicdata.ng/tobieeniafe/stagingp-budget2017/mda_totals.json?column=Ministry&value=${ministry}&order_by=Total_Allocation&direction=${direction}&api_key=api-key`;
+		getData('GET', mdaByMinistry).then(function (data) {
+			//console.log(data);
+			let ministries = JSON.parse(data);
+			let output = '';
+			for (let m of ministries) {
+				mda.push(m.MDA);
+	      //amountAllocated.push(m.Total_Allocation * 0.000000001);
+				personnel.push(m.Total_Personnel * 0.000000001);
+				overhead.push(m.Total_Overhead * 0.000000001);
+				recurrent.push(m.Total_Recurrent * 0.000000001);
+				capital.push(m.Total_Capital * 0.000000001);
+			}
+			setTimeout(loadGraph, 3000);
+		}).catch(function (err) {
+			console.log(err);
+		});
+
+
+	  //pass received data into graph
+		var loadGraph = function() {
+			Highcharts.chart('allocationPerMinistryGraph', {
+    chart: {
+        type: 'bar'
+    },
+    title: {
+        text: 'Allocation per Ministry'
+    },
+    xAxis: {
+        categories: mda
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: 'Total Amount Allocated (billion)'
+        }
+    },
+    legend: {
+        reversed: true
+    },
+    plotOptions: {
+        series: {
+            stacking: 'normal'
+        }
+    },
+    series: [{
+        name: 'Personnel',
+        data: personnel
+    }, {
+        name: 'Overhead',
+        data: overhead
+    }, {
+        name: 'Recurrent',
+        data: recurrent
+    }, {
+        name: 'Capital',
+        data: capital
+    }]
+	});
+	  };
+
+	}
+
+
+
+</script>
+</body>
+</html>

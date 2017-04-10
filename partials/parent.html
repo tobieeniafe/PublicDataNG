@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="stylesheet" href="../css/bootstrap.min.css">
+	<link rel="stylesheet" href="../css/highcharts.css">
+	<link rel="stylesheet" href="../css/style.css">
+
+	<script src="../js/jquery.min.js"></script>
+	<script src="../js/highcharts.js"></script>
+	<script src="../js/exporting.js"></script>
+  <script src="../js/script.js"></script>
+</head>
+<body>
+	<div class="container">
+      <div class="header clearfix">
+        <nav>
+          <ul class="nav nav-pills pull-right">
+            <li role="presentation"><a href="/">Home</a></li>
+            <li role="presentation"><a href='getministries.html'>Allocation Per Ministry</a></li>
+            <li role="presentation" class="active"><a href='parent.html'>Parent Allocations</a></li>
+          </ul>
+        </nav>
+        <h3 class="text-muted">Budget 2017</h3>
+      </div>
+
+			<div class="row">
+		    <div class="col-md-2 col-sm-4">
+		      <select name="select" id="select" class="form-control col-sm-1">
+						<option value="all">All Allocations</option>
+		        <!-- <option value="top">Top 20 Allocations</option> -->
+		        <option value="bottom">Bottom 20 Allocations</option>
+		      </select>
+		    </div>
+				<div class="col-md-2  col-sm-4">
+					<select name="direction" id="direction" class="form-control">
+						<option value="">Alphabetically</option>
+						<option value="ASC">Ascending</option>
+						<option value="DESC">Descending</option>
+					</select>
+				</div>
+		    <div class="col-md-1 col-sm-4">
+		      <input type="button" name="submit" value="Display" class="btn" onclick="displayGraph();">
+		    </div>
+		  </div>
+			<br>
+			<div class="row">
+		    <div class="col-md-12 col-sm-12">
+		      <div id="parentMinistryGraph" style="min-width: 90%; min-height: 450px; margin: 0 auto"></div>
+		    </div>
+		  </div>
+
+      <footer class="footer">
+        <p>&copy; 2017 Tinitop</p>
+      </footer>
+
+    </div> <!-- /container -->
+
+
+<script>
+$( "#select" ).click(function() {
+    var type = document.getElementById('select').value;
+		if (type === 'all') {
+			$( "#direction" ).removeAttr("disabled");
+		} else {
+			$( "#direction" ).attr("disabled","");
+		}
+});
+
+var displayGraph = function () {
+  var type = document.getElementById('select').value;
+	var direction = document.getElementById('direction').value;
+  var parent = `../json/parents_allocation_${type}.json`;
+  var parentMinistry = [];
+  var amountAllocated = [];
+
+	if (type === 'all') {
+		if (direction === 'ASC') {
+			var parent = `../json/parents_allocation_asc.json`;
+		}else if (direction === 'DESC') {
+			var parent = `../json/parents_allocation_desc.json`;
+		} else {
+			var parent = `../json/parents_allocation.json`;
+		}
+  }
+
+  //call API
+  getData('GET', parent).then(function (data) {
+    var parents = JSON.parse(data);
+    var output = '';
+		var allocation = 0;
+    for (let parent of parents) {
+      parentMinistry.push(parent.Ministry);
+      amountAllocated.push(parent.Total_Allocation * 0.000000001);
+			allocation += parseInt(parent.Total_Allocation);
+    }
+		//console.log(allocation);
+		setTimeout(loadGraph, 1500);
+  }).catch(function (err) {
+    console.log(err);
+  });
+
+
+  //pass received data into graph
+  var loadGraph = function() {
+		Highcharts.chart('parentMinistryGraph', {
+    chart: {
+        type: 'bar'
+    },
+    title: {
+        text: `Parent Ministries Allocation (${type})`
+    },
+    subtitle: {
+        //text: ''
+    },
+    xAxis: {
+        categories: parentMinistry,
+        title: {
+            text: null
+        }
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: 'Amount Allocated (billion)',
+            align: 'high'
+        },
+        labels: {
+            overflow: 'justify'
+        }
+    },
+    tooltip: {
+        valueSuffix: ' billion'
+    },
+    plotOptions: {
+        bar: {
+            dataLabels: {
+                enabled: false
+            }
+        }
+    },
+    legend: {
+        layout: 'vertical',
+        align: 'right',
+        verticalAlign: 'top',
+        x: -40,
+        y: 80,
+        floating: true,
+        borderWidth: 0,
+        backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+        shadow: true
+    },
+    credits: {
+        enabled: false
+    },
+    series: [{
+        name: 'Amount Allocated',
+        data: amountAllocated
+    }]
+});
+
+  };
+
+
+}
+
+window.onload = setTimeout(displayGraph,1500);
+</script>
+
+</body>
+</html>

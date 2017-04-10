@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>PublicData.NG</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="/css/style.css">
+	<script src="js/highcharts.js"></script>
+	<script src="js/data.js"></script>
+	<script src="js/drilldown.js"></script>
+	<script src="js/script.js"></script>
+</head>
+<body>
+	<div class="container">
+      <div class="header clearfix">
+        <nav>
+          <ul class="nav nav-pills pull-right">
+            <li role="presentation" class="active"><a href="/">Home</a></li>
+            <li role="presentation"><a href='partials/getministries.html'>Allocation Per Ministry</a></li>
+            <li role="presentation"><a href='partials/parent.html'>Parent Allocations</a></li>
+          </ul>
+        </nav>
+        <h3 class="text-muted">Budget 2017</h3>
+      </div>
+
+      <div class="row" style="min-height: 250px">
+				<div id="pie" style="min-width: 100%; min-height: 90%; margin: 0 auto"></div>
+      </div>
+
+      <footer class="footer">
+        <p>&copy; 2017 Tinitop</p>
+      </footer>
+
+    </div> <!-- /container -->
+
+
+
+<script type="text/javascript">
+
+displayGraph = function () {
+	var parent = `json/parents_allocation.json`;
+	var seriesData = [];	var defenceData = []; var financeData = []; var npData = []; var pwhData = [];	var interiorData = [];	var educationData = [];	var healthData = [];
+	var transportData = [];	var agricultureData = [];	var nsaData = [];	var waterData = [];	var tradeData = [];	var youthData = [];	var sgfData = [];	var petroleumData = [];
+	var foreignaffairsData = [];	var scienceData = [];	var cultureData = [];	var statehouseData = [];	var fctData = [];	var fctData = [];	var nigerdeltaData = [];	var environmentData = [];
+	var steelData = [];	var justiceData = [];	var technologyData = [];	var labourData = [];	var populationData = [];	var civilfedData = [];	var icpcData = []; var womenaffairsData = [];
+	var auditorgeneralData = [];	var conductbureauData = [];	var characterData = [];	var rmafcData = [];	var policeData = [];	var conducttribunalData = [];	var civilserviceData = [];
+	var icrcData = []; var incomeData = []; var fiscalresponsibilityData = [];
+  //call API
+  getData('GET', parent).then(function (data) {
+    var parents = JSON.parse(data);
+
+    for (let parent of parents) {
+      let x = {
+							name: parent.Ministry,
+              y: parseInt((parent.Total_Allocation / 6879433170120 * 100).toFixed(5)),
+						 	drilldown: parent.Ministry
+						}
+      seriesData.push(x);
+    }
+		//setTimeout(loadGraph, 1500);
+		//console.log(seriesData);
+  }).catch(function (err) {
+    console.log(err);
+  });
+
+
+/////////////////////////////////////////////////////////////////////////////////////
+	getData('GET', 'json/mda_totals.json').then(function (data) {
+    var mda = JSON.parse(data);
+		var total = 0;
+
+		var x = mda.filter(x => x.Ministry === 'FEDERAL MINISTRY OF DEFENCE').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'FEDERAL MINISTRY OF DEFENCE').map(y => (y.Total_Allocation/465488229569*100));
+		for (var i = 0; i < x.length; i++) {
+			defenceData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'FEDERAL MINISTRY OF FINANCE').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'FEDERAL MINISTRY OF FINANCE').map(y => (y.Total_Allocation/1852822328965*100));
+		for (var i = 0; i < x.length; i++) {
+			financeData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'MINISTRY OF BUDGET AND NATIONAL PLANNING').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'MINISTRY OF BUDGET AND NATIONAL PLANNING').map(y => (y.Total_Allocation/1327511257546*100));
+		for (var i = 0; i < x.length; i++) {
+			npData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'FEDERAL MINISTRY OF POWER, WORKS & HOUSING').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'FEDERAL MINISTRY OF POWER, WORKS & HOUSING').map(y => (y.Total_Allocation/564211523491*100));
+		for (var i = 0; i < x.length; i++) {
+			pwhData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'FEDERAL MINISTRY OF INTERIOR').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'FEDERAL MINISTRY OF INTERIOR').map(y => (y.Total_Allocation/545630780046*100));
+		for (var i = 0; i < x.length; i++) {
+			interiorData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'FEDERAL MINISTRY OF EDUCATION').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'FEDERAL MINISTRY OF EDUCATION').map(y => (y.Total_Allocation/448443102531*100));
+		for (var i = 0; i < x.length; i++) {
+			educationData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'FEDERAL MINISTRY OF HEALTH').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'FEDERAL MINISTRY OF HEALTH').map(y => (y.Total_Allocation/304137069776*100));
+		for (var i = 0; i < x.length; i++) {
+			healthData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'FEDERAL MINISTRY OF TRANSPORT').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'FEDERAL MINISTRY OF TRANSPORT').map(y => (y.Total_Allocation/276860103581*100));
+		for (var i = 0; i < x.length; i++) {
+			transportData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'FEDERAL MINISTRY OF AGRICULTURE').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'FEDERAL MINISTRY OF AGRICULTURE').map(y => (y.Total_Allocation/123440807614*100));
+		for (var i = 0; i < x.length; i++) {
+			agricultureData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'OFFICE OF THE NATIONAL SECURITY ADVISER').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'OFFICE OF THE NATIONAL SECURITY ADVISER').map(y => (y.Total_Allocation/110490229417*100));
+		for (var i = 0; i < x.length; i++) {
+			nsaData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'FEDERAL MINISTRY OF WATER RESOURCES').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'FEDERAL MINISTRY OF WATER RESOURCES').map(y => (y.Total_Allocation/92447482383*100));
+		for (var i = 0; i < x.length; i++) {
+			waterData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'FEDERAL MINISTRY OF INDUSTRY, TRADE AND INVESTMENT').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'FEDERAL MINISTRY OF INDUSTRY, TRADE AND INVESTMENT').map(y => (y.Total_Allocation/91663203675*100));
+		for (var i = 0; i < x.length; i++) {
+			tradeData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'FEDERAL MINISTRY OF YOUTH AND SPORT DEVELOPMENT').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'FEDERAL MINISTRY OF YOUTH AND SPORT DEVELOPMENT').map(y => (y.Total_Allocation/83416015165*100));
+		for (var i = 0; i < x.length; i++) {
+			youthData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'SECRETARY TO THE GOVERNMENT OF THE FEDERATION (SGF)').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'SECRETARY TO THE GOVERNMENT OF THE FEDERATION (SGF)').map(y => (y.Total_Allocation/72972012441*100));
+		for (var i = 0; i < x.length; i++) {
+			sgfData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'FEDERAL MINISTRY OF PETROLEUM RESOURCES').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'FEDERAL MINISTRY OF PETROLEUM RESOURCES').map(y => (y.Total_Allocation/69548648452*100));
+		for (var i = 0; i < x.length; i++) {
+			petroleumData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'MINISTRY OF FOREIGN AFFAIRS').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'MINISTRY OF FOREIGN AFFAIRS').map(y => (y.Total_Allocation/66663817862*100));
+		for (var i = 0; i < x.length; i++) {
+			foreignaffairsData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'FEDERAL MINISTRY OF SCIENCE AND TECHNOLOGY').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'FEDERAL MINISTRY OF SCIENCE AND TECHNOLOGY').map(y => (y.Total_Allocation/65138988748*100));
+		for (var i = 0; i < x.length; i++) {
+			scienceData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'FEDERAL MINISTRY OF INFORMATION & CULTURE').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'FEDERAL MINISTRY OF INFORMATION & CULTURE').map(y => (y.Total_Allocation/49464302071*100));
+		for (var i = 0; i < x.length; i++) {
+			cultureData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'STATE HOUSE ').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'STATE HOUSE ').map(y => (y.Total_Allocation/42917666210*100));
+		for (var i = 0; i < x.length; i++) {
+			statehouseData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'FEDERAL CAPITAL TERRITORY ADMINISTRATION').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'FEDERAL CAPITAL TERRITORY ADMINISTRATION').map(y => (y.Total_Allocation/37297122872*100));
+		for (var i = 0; i < x.length; i++) {
+			fctData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'FEDERAL MINISTRY OF NIGER DELTA').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'FEDERAL MINISTRY OF NIGER DELTA').map(y => (y.Total_Allocation/35501382365*100));
+		for (var i = 0; i < x.length; i++) {
+			nigerdeltaData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'FEDERAL MINISTRY OF ENVIRONMENT').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'FEDERAL MINISTRY OF ENVIRONMENT').map(y => (y.Total_Allocation/25711866672*100));
+		for (var i = 0; i < x.length; i++) {
+			environmentData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'FEDERAL MINISTRY OF MINES AND STEEL DEVELOPMENT').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'FEDERAL MINISTRY OF MINES AND STEEL DEVELOPMENT').map(y => (y.Total_Allocation/23275564736*100));
+		for (var i = 0; i < x.length; i++) {
+			steelData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'FEDERAL MINISTRY OF JUSTICE').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'FEDERAL MINISTRY OF JUSTICE').map(y => (y.Total_Allocation/22238344707*100));
+		for (var i = 0; i < x.length; i++) {
+			justiceData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'FEDERAL MINISTRY OF COMMUNICATION TECHNOLOGY- HQTRS').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'FEDERAL MINISTRY OF COMMUNICATION TECHNOLOGY- HQTRS').map(y => (y.Total_Allocation/18750951876*100));
+		for (var i = 0; i < x.length; i++) {
+			technologyData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'FEDERAL MINISTRY OF LABOUR AND EMPLOYMENT').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'FEDERAL MINISTRY OF LABOUR AND EMPLOYMENT').map(y => (y.Total_Allocation/17003707010*100));
+		for (var i = 0; i < x.length; i++) {
+			labourData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'NATIONAL POPULATION COMMISSION').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'NATIONAL POPULATION COMMISSION').map(y => (y.Total_Allocation/9799419456*100));
+		for (var i = 0; i < x.length; i++) {
+			populationData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'OFFICE OF THE HEAD OF THE CIVIL SERVICE OF THE FEDERATION').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'OFFICE OF THE HEAD OF THE CIVIL SERVICE OF THE FEDERATION').map(y => (y.Total_Allocation/8671457701*100));
+		for (var i = 0; i < x.length; i++) {
+			civilfedData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'INDEPENDENT CORRUPT PRACTICES AND RELATED OFFENCES COMMISSION').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'INDEPENDENT CORRUPT PRACTICES AND RELATED OFFENCES COMMISSION').map(y => (y.Total_Allocation/5927505301*100));
+		for (var i = 0; i < x.length; i++) {
+			icpcData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'FEDERAL MINISTRY OF WOMEN AFFAIRS').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'FEDERAL MINISTRY OF WOMEN AFFAIRS').map(y => (y.Total_Allocation/5467266200*100));
+		for (var i = 0; i < x.length; i++) {
+			womenaffairsData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'AUDITOR GENERAL FOR THE FEDERATION').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'AUDITOR GENERAL FOR THE FEDERATION').map(y => (y.Total_Allocation/2783763339*100));
+		for (var i = 0; i < x.length; i++) {
+			auditorgeneralData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'CODE OF CONDUCT BUREAU').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'CODE OF CONDUCT BUREAU').map(y => (y.Total_Allocation/2732437287*100));
+		for (var i = 0; i < x.length; i++) {
+			conductbureauData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'FEDERAL CHARACTER COMMISSION').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'FEDERAL CHARACTER COMMISSION').map(y => (y.Total_Allocation/2564721471*100));
+		for (var i = 0; i < x.length; i++) {
+			characterData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'REVENUE MOBILIZATION, ALLOCATION AND FISCAL COMMISSION').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'REVENUE MOBILIZATION, ALLOCATION AND FISCAL COMMISSION').map(y => (y.Total_Allocation/2291023974*100));
+		for (var i = 0; i < x.length; i++) {
+			rmafcData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'POLICE SERVICE COMMISSION').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'POLICE SERVICE COMMISSION').map(y => (y.Total_Allocation/1967172630*100));
+		for (var i = 0; i < x.length; i++) {
+			policeData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'CODE OF CONDUCT TRIBUNAL').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'CODE OF CONDUCT TRIBUNAL').map(y => (y.Total_Allocation/1087395286*100));
+		for (var i = 0; i < x.length; i++) {
+			conducttribunalData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'FEDERAL CIVIL SERVICE COMMISSION').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'FEDERAL CIVIL SERVICE COMMISSION').map(y => (y.Total_Allocation/959933773*100));
+		for (var i = 0; i < x.length; i++) {
+			civilserviceData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'INFRASTRUCTURE CONCESSION AND REGULATORY COMMISSION (ICRC)').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'INFRASTRUCTURE CONCESSION AND REGULATORY COMMISSION (ICRC)').map(y => (y.Total_Allocation/918934709*100));
+		for (var i = 0; i < x.length; i++) {
+			icrcData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'NATIONAL SALARIES, INCOME AND WAGES COMMISSION').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'NATIONAL SALARIES, INCOME AND WAGES COMMISSION').map(y => (y.Total_Allocation/794625783*100));
+		for (var i = 0; i < x.length; i++) {
+			incomeData.push([x[i], y[i]]);
+		}
+
+		var x = mda.filter(x => x.Ministry === 'FISCAL RESPONSIBILITY COMMISSION').map(x => x.MDA);
+		var y = mda.filter(y => y.Ministry === 'FISCAL RESPONSIBILITY COMMISSION').map(y => (y.Total_Allocation/421003429*100));
+		for (var i = 0; i < x.length; i++) {
+			fiscalresponsibilityData.push([x[i], y[i]]);
+		}
+
+
+		setTimeout(loadGraph, 1500);
+  }).catch(function (err) {
+    console.log(err);
+  });
+/////////////////////////////////////////////////////////////////////////////////////
+
+	loadGraph = function () {
+		Highcharts.chart('pie', {
+		    chart: {
+		        type: 'pie'
+		    },
+		    title: {
+		        text: 'Nigeria\'s Budget Allocation 2017'
+		    },
+		    subtitle: {
+		        text: 'Click the slices or links to view details.'
+		    },
+		    plotOptions: {
+		        series: {
+		            dataLabels: {
+		                enabled: true,
+		                format: '{point.name}: {point.y:.1f}%'
+		            }
+		        }
+		    },
+
+		    tooltip: {
+		        headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+		        pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
+		    },
+		    series: [{
+		        name: 'Allocations',
+		        colorByPoint: true,
+		        data: seriesData
+		    }],
+				drilldown: {
+		        series: [{
+		            name: 'FEDERAL MINISTRY OF FINANCE',
+		            id: 'FEDERAL MINISTRY OF FINANCE',
+		            data: financeData
+		        },{
+		            name: 'MINISTRY OF BUDGET AND NATIONAL PLANNING',
+		            id: 'MINISTRY OF BUDGET AND NATIONAL PLANNING',
+		            data: npData
+		        },
+						{
+		            name: 'FEDERAL MINISTRY OF POWER, WORKS & HOUSING',
+		            id: 'FEDERAL MINISTRY OF POWER, WORKS & HOUSING',
+		            data: pwhData
+		        },
+						{
+		            name: 'FEDERAL MINISTRY OF INTERIOR',
+		            id: 'FEDERAL MINISTRY OF INTERIOR',
+		            data: interiorData
+		        },
+						{
+		            name: 'FEDERAL MINISTRY OF EDUCATION',
+		            id: 'FEDERAL MINISTRY OF EDUCATION',
+		            data: educationData
+		        },
+						{
+		            name: 'FEDERAL MINISTRY OF HEALTH',
+		            id: 'FEDERAL MINISTRY OF HEALTH',
+		            data: healthData
+		        },
+						{
+		            name: 'FEDERAL MINISTRY OF TRANSPORT',
+		            id: 'FEDERAL MINISTRY OF TRANSPORT',
+		            data: transportData
+		        },
+						{
+		            name: 'FEDERAL MINISTRY OF AGRICULTURE',
+		            id: 'FEDERAL MINISTRY OF AGRICULTURE',
+		            data: agricultureData
+		        },
+						{
+		            name: 'OFFICE OF THE NATIONAL SECURITY ADVISER',
+		            id: 'OFFICE OF THE NATIONAL SECURITY ADVISER',
+		            data: nsaData
+		        },
+						{
+		            name: 'FEDERAL MINISTRY OF WATER RESOURCES',
+		            id: 'FEDERAL MINISTRY OF WATER RESOURCES',
+		            data: waterData
+		        },
+						{
+		            name: 'FEDERAL MINISTRY OF INDUSTRY, TRADE AND INVESTMENT',
+		            id: 'FEDERAL MINISTRY OF INDUSTRY, TRADE AND INVESTMENT',
+		            data: tradeData
+		        },
+						{
+		            name: 'FEDERAL MINISTRY OF YOUTH AND SPORT DEVELOPMENT',
+		            id: 'FEDERAL MINISTRY OF YOUTH AND SPORT DEVELOPMENT',
+		            data: youthData
+		        },
+						{
+		            name: 'SECRETARY TO THE GOVERNMENT OF THE FEDERATION (SGF)',
+		            id: 'SECRETARY TO THE GOVERNMENT OF THE FEDERATION (SGF)',
+		            data: sgfData
+		        },
+						{
+		            name: 'FEDERAL MINISTRY OF PETROLEUM RESOURCES',
+		            id: 'FEDERAL MINISTRY OF PETROLEUM RESOURCES',
+		            data: petroleumData
+		        },
+						{
+		            name: 'MINISTRY OF FOREIGN AFFAIRS',
+		            id: 'MINISTRY OF FOREIGN AFFAIRS',
+		            data: foreignaffairsData
+		        },
+						{
+		            name: 'FEDERAL MINISTRY OF SCIENCE AND TECHNOLOGY',
+		            id: 'FEDERAL MINISTRY OF SCIENCE AND TECHNOLOGY',
+		            data: scienceData
+		        },
+						{
+		            name: 'FEDERAL MINISTRY OF INFORMATION & CULTURE',
+		            id: 'FEDERAL MINISTRY OF INFORMATION & CULTURE',
+		            data: cultureData
+		        },
+						{
+		            name: 'STATE HOUSE ',
+		            id: 'STATE HOUSE ',
+		            data: statehouseData
+		        },
+						{
+		            name: 'FEDERAL CAPITAL TERRITORY ADMINISTRATION',
+		            id: 'FEDERAL CAPITAL TERRITORY ADMINISTRATION',
+		            data: fctData
+		        },
+						{
+		            name: 'FEDERAL MINISTRY OF NIGER DELTA',
+		            id: 'FEDERAL MINISTRY OF NIGER DELTA',
+		            data: nigerdeltaData
+		        },
+						{
+		            name: 'FEDERAL MINISTRY OF ENVIRONMENT',
+		            id: 'FEDERAL MINISTRY OF ENVIRONMENT',
+		            data: environmentData
+		        },
+						{
+		            name: 'FEDERAL MINISTRY OF MINES AND STEEL DEVELOPMENT',
+		            id: 'FEDERAL MINISTRY OF MINES AND STEEL DEVELOPMENT',
+		            data: steelData
+		        },
+						{
+		            name: 'FEDERAL MINISTRY OF JUSTICE',
+		            id: 'FEDERAL MINISTRY OF JUSTICE',
+		            data: justiceData
+		        },
+						{
+		            name: 'FEDERAL MINISTRY OF COMMUNICATION TECHNOLOGY- HQTRS',
+		            id: 'FEDERAL MINISTRY OF COMMUNICATION TECHNOLOGY- HQTRS',
+		            data: technologyData
+		        },
+						{
+		            name: 'FEDERAL MINISTRY OF LABOUR AND EMPLOYMENT',
+		            id: 'FEDERAL MINISTRY OF LABOUR AND EMPLOYMENT',
+		            data: labourData
+		        },
+						{
+		            name: 'NATIONAL POPULATION COMMISSION',
+		            id: 'NATIONAL POPULATION COMMISSION',
+		            data: populationData
+		        },
+						{
+		            name: 'OFFICE OF THE HEAD OF THE CIVIL SERVICE OF THE FEDERATION',
+		            id: 'OFFICE OF THE HEAD OF THE CIVIL SERVICE OF THE FEDERATION',
+		            data: civilfedData
+		        },
+						{
+		            name: 'INDEPENDENT CORRUPT PRACTICES AND RELATED OFFENCES COMMISSION',
+		            id: 'INDEPENDENT CORRUPT PRACTICES AND RELATED OFFENCES COMMISSION',
+		            data: icpcData
+		        },
+						{
+		            name: 'FEDERAL MINISTRY OF WOMEN AFFAIRS',
+		            id: 'FEDERAL MINISTRY OF WOMEN AFFAIRS',
+		            data: womenaffairsData
+						},
+						{
+		            name: 'AUDITOR GENERAL FOR THE FEDERATION',
+		            id: 'AUDITOR GENERAL FOR THE FEDERATION',
+		            data: auditorgeneralData
+		        },
+						{
+		            name: 'CODE OF CONDUCT BUREAU',
+		            id: 'CODE OF CONDUCT BUREAU',
+		            data: conductbureauData
+		        },
+						{
+		            name: 'FEDERAL CHARACTER COMMISSION',
+		            id: 'FEDERAL CHARACTER COMMISSION',
+		            data: characterData
+		        },
+						{
+		            name: 'REVENUE MOBILIZATION, ALLOCATION AND FISCAL COMMISSION',
+		            id: 'REVENUE MOBILIZATION, ALLOCATION AND FISCAL COMMISSION',
+		            data: rmafcData
+		        },
+						{
+		            name: 'POLICE SERVICE COMMISSION',
+		            id: 'POLICE SERVICE COMMISSION',
+		            data: policeData
+		        },
+						{
+		            name: 'CODE OF CONDUCT TRIBUNAL',
+		            id: 'CODE OF CONDUCT TRIBUNAL',
+		            data: conducttribunalData
+		        },
+						{
+		            name: 'FEDERAL CIVIL SERVICE COMMISSION',
+		            id: 'FEDERAL CIVIL SERVICE COMMISSION',
+		            data: civilserviceData
+		        },
+						{
+		            name: 'INFRASTRUCTURE CONCESSION AND REGULATORY COMMISSION (ICRC)',
+		            id: 'INFRASTRUCTURE CONCESSION AND REGULATORY COMMISSION (ICRC)',
+		            data: icrcData
+		        },
+						{
+		            name: 'NATIONAL SALARIES, INCOME AND WAGES COMMISSION',
+		            id: 'NATIONAL SALARIES, INCOME AND WAGES COMMISSION',
+		            data: incomeData
+		        },
+						{
+		            name: 'FISCAL RESPONSIBILITY COMMISSION',
+		            id: 'FISCAL RESPONSIBILITY COMMISSION',
+		            data: fiscalresponsibilityData
+		        },
+						{
+								name: 'FEDERAL MINISTRY OF DEFENCE',
+								id: 'FEDERAL MINISTRY OF DEFENCE',
+								data: defenceData
+						}]
+		    }
+		});
+	}
+
+
+}
+window.onload = setTimeout(displayGraph,1000);
+</script>
+</body>
+</html>
